@@ -1,0 +1,219 @@
+public enum GameMode {
+    FullDrive,       // (1)
+    FullPlay,        // (2)
+    KeyMoments,      // (3)
+    Hybrid           // (4)
+}
+
+public class GameModeController : MonoBehaviour {
+    public GameMode mode = GameMode.Hybrid;
+
+    public void SetMode(GameMode newMode) {
+        mode = newMode;
+    }
+
+    public void ProcessNext() {
+        switch (mode) {
+            case GameMode.FullDrive:
+                SimulateDrive();
+                break;
+            case GameMode.FullPlay:
+                SimulatePlay();
+                break;
+            case GameMode.KeyMoments:
+                SimulateKeyMoment();
+                break;
+            case GameMode.Hybrid:
+                HybridDecision();
+                break;
+        }
+    }
+
+    void SimulateDrive() { /* Full possession */ }
+    void SimulatePlay() { /* Each snap */ }
+    void SimulateKeyMoment() { /* 3rd downs, red zone, clutch */ }
+
+    void HybridDecision() {
+        // AI picks if user should play or sim
+    }
+}
+
+public class MobileInput : MonoBehaviour {
+    public Vector2 moveInput;
+    public bool sprint;
+    public bool juke;
+    public bool spin;
+    public bool hurdle;
+    public bool slide;
+
+    void Update() {
+        moveInput = new Vector2(
+            Joystick.Horizontal,
+            Joystick.Vertical
+        );
+
+        sprint = ButtonSprint.IsPressed;
+        juke = ButtonJuke.WasPressed;
+        spin = ButtonSpin.WasPressed;
+        hurdle = ButtonHurdle.WasPressed;
+        slide = ButtonSlide.WasPressed;
+    }
+}
+
+public class PassingSystem : MonoBehaviour {
+    public Transform qb;
+    public Transform[] receivers;
+    public float throwPower;
+    public Vector3 targetPoint;
+
+    Vector2 swipeStart;
+    Vector2 swipeEnd;
+    bool aiming;
+
+    void Update() {
+        if (TouchInput.StartedAiming) {
+            aiming = true;
+            swipeStart = TouchInput.Position;
+        }
+
+        if (TouchInput.EndedAiming && aiming) {
+            swipeEnd = TouchInput.Position;
+            Vector2 swipe = swipeEnd - swipeStart;
+
+            throwPower = Mathf.Clamp(swipe.magnitude / 300f, 0.2f, 1f);
+            targetPoint = CalculateLeadTarget(swipe);
+
+            ExecuteThrow();
+            aiming = false;
+        }
+    }
+
+    Vector3 CalculateLeadTarget(Vector2 swipeVec) {
+        // directional lead based on swipe angle
+        float angle = Mathf.Atan2(swipeVec.y, swipeVec.x);
+        return qb.position + new Vector3(
+            Mathf.Cos(angle) * 20f,
+            1.5f,
+            Mathf.Sin(angle) * 20f
+        );
+    }
+
+    void ExecuteThrow() {
+        // physics based throw
+    }
+}
+
+public class PlayerController : MonoBehaviour {
+    public MobileInput input;
+    public float speed = 6f;
+    public float sprintMult = 1.4f;
+    public Rigidbody rb;
+
+    void FixedUpdate() {
+        Vector3 dir = new Vector3(input.moveInput.x, 0, input.moveInput.y);
+
+        float finalSpeed = input.sprint ? speed * sprintMult : speed;
+        rb.velocity = dir * finalSpeed;
+
+        if (input.juke) DoJuke();
+        if (input.spin) DoSpin();
+        if (input.hurdle) DoHurdle();
+        if (input.slide) DoQBSlide();
+    }
+}
+
+public class PlayerProfile {
+    public string name;
+    public int age;
+    public PlayerStage stage; // HS, COLLEGE, TRANSFER, DRAFT, NFL, RETIRED
+    public PlayerArchetype archetype;
+
+    public Ratings ratings;
+    public Contract contract;
+    public CollegeRecruiting recruiting;
+    public DraftProfile draftProfile;
+}
+public enum PlayerStage {
+    HighSchool, College, Portal, Draft, NFL, Retired
+}
+public class CameraFollow : MonoBehaviour {
+    public Transform target;
+    public Vector3 offset = new Vector3(-12, 8, 0);
+    public float smooth = 0.1f;
+
+    void LateUpdate() {
+        Vector3 desired = target.position + offset;
+        transform.position = Vector3.Lerp(transform.position, desired, smooth);
+        transform.LookAt(target);
+    }
+}
+using System.Collections.Generic;
+using UnityEngine;
+
+//----------------------------//
+// PLAYER PROFILE & RATINGS
+//----------------------------//
+public enum PlayerStage { HighSchool, College, Portal, Draft, NFL, Retired }
+public enum PlayerArchetype { QB, WR, RB, LB, DB, K, P }
+
+[System.Serializable]
+public class Ratings {
+    public float speed, accel, strength, agility, jump;
+    public float stamina, injuryResist, fatigue;
+    public float catch, route, throwPower, throwAccuracy;
+    public float carry, ballProtect, passBlock, runBlock, tackle;
+    public float awareness, footballIQ, discipline, clutch;
+}
+
+[System.Serializable]
+public class PlayerProfile {
+    public string name;
+    public int age;
+    public PlayerStage stage;
+    public PlayerArchetype archetype;
+    public Ratings ratings;
+    public int xp = 0;
+    public float hype = 100;
+    public float morale = 80;
+    public bool injured = false;
+}
+
+//----------------------------//
+// MOBILE INPUT SYSTEM
+//----------------------------//
+public class MobileInput : MonoBehaviour {
+    public Vector2 moveInput;
+    public bool sprint, juke, spin, hurdle, slide;
+    public Joystick joystick;
+    public TouchButton buttonSprint, buttonJuke, buttonSpin, buttonHurdle, buttonSlide;
+
+    void Update() {
+        moveInput = new Vector2(joystick.Horizontal, joystick.Vertical);
+        sprint = buttonSprint.IsPressed;
+        juke = buttonJuke.WasPressed;
+        spin = buttonSpin.WasPressed;
+        hurdle = buttonHurdle.WasPressed;
+        slide = buttonSlide.WasPressed;
+    }
+}
+
+//----------------------------//
+// PLAYER CONTROLLER
+//----------------------------//
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerController : MonoBehaviour {
+    public MobileInput input;
+    public float baseSpeed = 6f, sprintMult = 1.4f;
+    Rigidbody rb;
+
+    void Start() { rb = GetComponent<Rigidbody>(); }
+
+    void FixedUpdate() {
+        Vector3 dir = new Vector3(input.moveInput.x, 0, input.moveInput.y);
+        float speed = input.sprint ? baseSpeed * sprintMult : baseSpeed;
+        rb.velocity = dir * speed;
+
+        if(input.juke) DoJuke();
+        if(input.spin) DoSpin();
+        if
+High School → College → Transfer Portal → Draft → NFL → Retirement
