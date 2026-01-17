@@ -1,0 +1,35 @@
+createPlayerMesh(color, number) {
+    const group = new THREE.Group();
+
+    // Body (capsule)
+    const bodyGeo = new THREE.CapsuleGeometry(0.4, 1.2, 4, 8);
+    const bodyMat = new THREE.MeshPhongMaterial({ color: color });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 1.0;
+    group.add(body);
+
+    // Head (sphere)
+    const headGeo = new THREE.SphereGeometry(0.3, 8, 8);
+    const headMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
+    const head = new THREE.Mesh(headGeo, headMat);
+    head.position.y = 2.0;
+    group.add(head);
+
+    // Jersey number (simple text sprite)
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 48px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(number, 32, 32);
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.position.set(0, 1, 0.5);
+    sprite.scale.set(0.5, 0.5, 1);
+    group.add(sprite);
+
+    return group;
+}
