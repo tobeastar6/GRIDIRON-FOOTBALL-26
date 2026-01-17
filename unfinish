@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GRIDIRON 26: Ultimate Career</title>
+<style>
+:root { --primary:#00ff88; --secondary:#ff4400; --ui-bg:rgba(0,0,0,0.8);}
+body{margin:0;background:#000;color:#fff;font-family:'Orbitron',sans-serif;overflow:hidden;touch-action:none;}
+#hud{position:absolute;top:15px;width:100%;display:flex;justify-content:space-between;padding:0 30px;pointer-events:none;z-index:10;}
+.stat-box{background:var(--ui-bg);padding:10px 15px;border-left:3px solid var(--primary);font-size:14px;}
+#menu-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:100;pointer-events:all;}
+.panel{background:#111;padding:25px;border:1px solid #333;width:600px;max-height:90vh;overflow-y:auto;border-radius:8px;}
+.btn{background:var(--primary);color:#000;border:none;padding:12px;font-weight:900;cursor:pointer;width:100%;margin:5px 0;text-transform:uppercase;}
+#game-log{position:absolute;bottom:15px;left:15px;color:var(--primary);font-size:12px;max-width:90%;}
+#joystick-container{position:absolute;bottom:40px;left:40px;width:120px;height:120px;background:var(--ui-bg);border-radius:50%;border:2px solid #333;z-index:50;}
+#joystick-knob{position:absolute;top:50%;left:50%;width:50px;height:50px;background:var(--primary);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 15px var(--primary);}
+#action-bar{position:absolute;bottom:40px;right:40px;display:flex;gap:15px;z-index:50;}
+.skill-btn{width:70px;height:70px;background:var(--ui-bg);border:2px solid var(--primary);border-radius:50%;color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;text-transform:uppercase;cursor:pointer;}
+.skill-btn:active{background:var(--primary);color:#000;}
+</style>
+</head>
+<body>
+
+<div id="hud">
+<div class="stat-box">
+<div id="ui-score">COL 0 - 0 TEX</div>
+<div id="ui-down" style="color:var(--primary);font-weight:bold;">1st & 10</div>
+</div>
+<div class="stat-box" style="text-align:right;">
+<div id="ui-player-name">PLAYER</div>
+<div id="ui-ovr">OVR: 75</div>
+<div id="ui-xp" style="color:gold;">XP:0</div>
+</div>
+</div>
+
+<div id="menu-overlay">
+<div class="panel" id="ui-content">
+<h1>GRIDIRON 26: CAREER HUB</h1>
+<h3>Customize Your Player</h3>
+<input type="text" id="p-name" class="btn" placeholder="Player Name">
+<select id="p-pos" class="btn">
+<option value="QB">QB</option><option value="HB">HB</option><option value="WR">WR</option>
+<option value="LB">LB</option><option value="DB">DB</option>
+<option value="K">K/P</option>
+</select>
+<select id="p-league" class="btn">
+<option value="NCAA">NCAA</option><option value="NFL">NFL</option>
+</select>
+<select id="p-team" class="btn">
+<option value="Colorado">Colorado</option><option value="Texas">Texas</option>
+<option value="Georgia">Georgia</option><option value="Eagles">Eagles</option>
+<option value="Chiefs">Chiefs</option><option value="Cowboys">Cowboys</option>
+</select>
+<select id="p-look" class="btn">
+<option value="Default">Default</option><option value="Dreadlocks">Dreadlocks</option>
+<option value="Mohawk">Mohawk</option><option value="Helmet">Helmet</option>
+</select>
+<select id="p-diff" class="btn">
+<option value="ROOKIE">Rookie</option><option value="COLLEGE">College</option>
+<option value="PRO">Pro</option><option value="ALL_TIME">All-Time</option>
+</select>
+<button class="btn" onclick="Game.startGame()">Start Season</button>
+</div>
+</div>
+
+<div id="game-log">System: Ready for 2026 season.</div>
+<div id="joystick-container"><div id="joystick-knob"></div></div>
+<div id="action-bar">
+<div class="skill-btn" onclick="Game.skill('SPIN')">Spin</div>
+<div class="skill-btn" onclick="Game.skill('JUMP')">Jump</div>
+<div class="skill-btn" onclick="Game.skill('JUKE')">Juke</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js"></script>
