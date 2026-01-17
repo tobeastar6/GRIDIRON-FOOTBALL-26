@@ -1,0 +1,31 @@
+function playCrowdSound(type) {
+    const audio = new Audio(`sounds/${type}.mp3`);
+    audio.volume = 0.5; // base volume
+    audio.play();
+}
+
+// Trigger on play success
+if(routeCompleted) playCrowdSound('rising_cheer');
+
+// Trigger hush for away TD
+if(awayTD) {
+    setTimeout(() => playCrowdSound('away_cheer'), 2000);
+}
+import { calcInjury } from './collisionEngine.wasm';
+
+const injuryChance = calcInjury(playerOVR, totalTackleOVR, numDefenders);
+if player.tds < expected_tds:
+    news_feed.append(f"{player.name}'s draft stock drops due to poor route discipline")
+player.catchWindow = baseCatchWindow * chemistryMultiplier;
+if(weather === 'rain' || weather === 'snow') {
+    if(Math.abs(turnAngle) > 45 && player.speed > 1.5) {
+        if(Math.random() < 0.25) player.enterStumble();
+    }
+}
+.player-jersey {
+    filter: brightness(calc(100% - 0.5 * numTackles));
+}
+player.ovr = baseOVR + (dashTimeScore + benchScore) / 2
+SELECT * FROM rules WHERE league = 'NCAA';
+SELECT * FROM rules WHERE league = 'NFL';
+
